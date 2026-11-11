@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ashraf Al Qaisse · Head of Non-Invasive Cardiac Lab &amp; Senior Echocardiographer</title>
+  <meta name="description" content="Ashraf Jamal Jamel Al Qaisse: Head of Non-Invasive Cardiac Lab at Prince Hamza Hospital, Amman. Senior Echocardiographer and Clinical Instructor with 25+ years in hospital cardiac care." />
+  <meta name="theme-color" content="#070b12" />
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Ashraf Al Qaisse · Head of Non-Invasive Cardiac Lab" />
+  <meta property="og:description" content="Senior Echocardiographer and Clinical Instructor · Prince Hamza Hospital, Amman, Jordan." />
+  <meta property="og:url" content="https://dyia-alqaisi.github.io/ashraf-alqaisse-portfolio/" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ar_JO" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b12'/%3E%3Cpath d='M6 34h14l5-12 7 24 6-18 4 6h16' fill='none' stroke='%23e5484d' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" /></noscript>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <a class="skip" href="#about" data-i18n="skip">Skip to content</a>
+
+  <!-- Fixed 3D heart (lazy-loaded) and film grain -->
+  <canvas id="heart-canvas" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Shared SVG defs for the expertise micro-animations -->
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <filter id="speckle" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="n" />
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.86  0 0 0 0 0.9  0 0 0 0 0.95  0 0 0 2.2 -0.85" result="g" />
+        <feComposite in="g" in2="SourceGraphic" operator="in" />
+      </filter>
+      <path id="fan" d="M80 8 L24.6 78.9 A90 90 0 0 0 135.4 78.9 Z" />
+      <radialGradient id="flow-red"><stop offset="0" stop-color="#ff6b5e" /><stop offset="0.5" stop-color="#e5484d" stop-opacity="0.8" /><stop offset="1" stop-color="#e5484d" stop-opacity="0" /></radialGradient>
+      <radialGradient id="flow-blue"><stop offset="0" stop-color="#7fb2ff" /><stop offset="0.5" stop-color="#3b82f6" stop-opacity="0.8" /><stop offset="1" stop-color="#3b82f6" stop-opacity="0" /></radialGradient>
+      <linearGradient id="spectral" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9eef5" stop-opacity="0.15" /><stop offset="1" stop-color="#e9eef5" stop-opacity="0.85" /></linearGradient>
+      <g id="mini-echo">
+        <use href="#fan" class="m-fan" />
+        <use href="#fan" class="m-speckle" filter="url(#speckle)" />
+      </g>
+    </defs>
+  </svg>
+
+  <header class="nav" id="nav">
+    <a href="#hero" class="nav__brand">
+      <svg class="nav__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M6 34h14l5-12 7 24 6-18 4 6h16" /></svg>
+      <span data-i18n="brand">Ashraf Al Qaisse</span>
+    </a>
+    <nav class="nav__links" aria-label="Sections">
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#expertise" data-i18n="nav.expertise">Expertise</a>
+      <a href="#career" data-i18n="nav.career">Career</a>
+      <a href="#teaching" data-i18n="nav.teaching">Teaching</a>
+      <a href="#education" data-i18n="nav.education">Education</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
+    </nav>
+    <div class="nav__end">
+      <div class="bpm" aria-hidden="true">
+        <canvas class="bpm__ecg" id="mini-ecg"></canvas>
+        <span class="bpm__val" id="bpm-val">72</span>
+        <span class="bpm__unit">BPM</span>
+      </div>
+      <button class="nav__lang" id="lang-toggle" type="button" lang="ar" aria-label="التبديل إلى العربية">عربي</button>
+    </div>
+  </header>
+
+  <main id="content">
+    <!-- 1. HERO -->
+    <section class="hero" id="hero" data-heart="hero" aria-labelledby="hero-name">
+      <canvas class="echo" id="echo-canvas" aria-hidden="true"></canvas>
+      <div class="hud hud--l" aria-hidden="true" dir="ltr">
+        <span>HR <b id="hud-hr">72</b> bpm</span>
+        <span>2.5 MHz</span>
+        <span>DEPTH 16 cm</span>
+      </div>
+      <div class="hud hud--r" aria-hidden="true" dir="ltr">
+        <span>ECHO · 2D</span>
+        <span>FR 30 Hz</span>
+        <span>GAIN 54</span>
+      </div>
+      <div class="hero__copy">
+        <p class="eyebrow eyebrow--plain hero__in" data-i18n="hero.eyebrow">Echocardiography · Amman, Jordan</p>
+        <h1 class="hero__name hero__in" id="hero-name">
+          <span data-i18n="hero.name1">Ashraf Jamal Jamel</span>
+          <span class="hero__family" data-i18n="hero.name2">Al Qaisse</span>
+        </h1>
+        <p class="hero__title hero__in" data-i18n="hero.title">Head of Non-Invasive Cardiac Lab<i>·</i>Senior Echocardiographer<i>·</i>Clinical Instructor</p>
+      </div>
+      <a class="scroll-cue" href="#about">
+        <span data-i18n="hero.scroll">Scroll</span>
+        <i aria-hidden="true"></i>
+      </a>
+    </section>
+
+    <!-- 2. ABOUT -->
+    <section class="panel about" id="about" data-heart="about" aria-labelledby="about-title">
+      <div class="panel__copy">
+        <header class="section-head" data-sweep>
+          <p class="eyebrow"><span class="eyebrow__n">01</span><span data-i18n="about.eyebrow">About</span></p>
+          <h2 class="h2" id="about-title" data-i18n="about.title">A career devoted to cardiac care</h2>
+        </header>
+        <p class="lead" data-reveal data-i18n="about.p">Cardiac care specialist with 25+ years of hospital experience, including 16 years in echocardiography and 4 years leading the Non-Invasive Cardiac Lab at Prince Hamza Hospital. He performs adult and pediatric echocardiography across all modalities: 2D, Doppler, Color Flow, Stress Echo and TEE, and has trained echo staff since 2020.</p>
+        <dl class="stats">
+          <div class="stat" data-card>
+            <dt class="stat__num" dir="ltr"><span data-count="25">25</span>+</dt>
+            <dd class="stat__label" data-i18n="stat.1">Years in hospital cardiac care</dd>
+          </div>
+          <div class="stat" data-card>
+            <dt class="stat__num" dir="ltr"><span data-count="16">16</span></dt>
+            <dd class="stat__label" data-i18n="stat.2">Years in echocardiography</dd>
+          </div>
+          <div class="stat" data-card>
+            <dt class="stat__num" dir="ltr"><span data-count="4">4</span></dt>
+            <dd class="stat__label" data-i18n="stat.3">Years leading the lab</dd>
+          </div>
+          <div class="stat" data-card>
+            <dt class="stat__num" dir="ltr"><span data-count="7">7</span></dt>
+            <dd class="stat__label" data-i18n="stat.4">Staff in the team he leads</dd>
+          </div>
+          <div class="stat" data-card>
+            <dt class="stat__num"><span data-count="6">6</span><small data-i18n="stat.5.unit">-month</small></dt>
+            <dd class="stat__label" data-i18n="stat.5">Echo courses he teaches</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 3. EXPERTISE -->
+    <section class="panel expertise" id="expertise" data-heart="expertise" aria-labelledby="exp-title">
+      <header class="section-head" data-sweep>
+        <p class="eyebrow"><span class="eyebrow__n">02</span><span data-i18n="exp.eyebrow">Expertise</span></p>
+        <h2 class="h2" id="exp-title" data-i18n="exp.title">Every window on the heart</h2>
+        <p class="sub" data-i18n="exp.sub">Adult and pediatric echocardiography across all modalities.</p>
+      </header>
+      <div class="cards cards--3">
+        <article class="card" data-card>
+          <svg class="micro" viewBox="0 0 160 100" role="img" aria-label="Animated illustration: 2D echo sector with a beating chamber">
+            <use href="#mini-echo" />
+            <g class="m-beat"><ellipse cx="80" cy="54" rx="15" ry="21" class="m-wall" /><ellipse cx="80" cy="54" rx="9" ry="15" class="m-cavity" /></g>
+            <line class="m-scan" x1="80" y1="8" x2="80" y2="98" />
+          </svg>
+          <h3 class="card__title" data-i18n="exp.2d">2D Echo</h3>
+          <p class="card__text" data-i18n="exp.2d.t">Real-time imaging of cardiac structure, chambers and wall motion.</p>
+        </article>
+        <article class="card" data-card>
+          <svg class="micro" viewBox="0 0 160 100" role="img" aria-label="Animated illustration: spectral Doppler waveform">
+            <rect x="8" y="10" width="144" height="80" rx="4" class="m-screen" />
+            <g class="m-grid"><line x1="8" y1="30" x2="152" y2="30" /><line x1="8" y1="50" x2="152" y2="50" /><line x1="8" y1="70" x2="152" y2="70" /></g>
+            <svg x="8" y="10" width="144" height="80" viewBox="0 0 144 80">
+              <g class="m-spectral">
+                <path d="M0 20 L10 20 L16 62 L22 70 L30 52 L36 26 L40 20 L48 20 L54 62 L60 70 L68 52 L74 26 L78 20 L86 20 L92 62 L98 70 L106 52 L112 26 L116 20 L124 20 L130 62 L136 70 L144 52 L150 26 L154 20 L162 20 L168 62 L174 70 L182 52 L188 26 L192 20 L200 20 L206 62 L212 70 L220 52 L226 26 L230 20 L238 20 L244 62 L250 70 L258 52 L264 26 L268 20 L276 20 L282 62 L288 70 L296 52 L302 26 L306 20 Z" />
+              </g>
+            </svg>
+            <line x1="8" y1="30" x2="152" y2="30" class="m-baseline" />
+          </svg>
+          <h3 class="card__title" data-i18n="exp.doppler">Doppler</h3>
+          <p class="card__text" data-i18n="exp.doppler.t">Spectral Doppler measurement of blood-flow velocities and pressure gradients.</p>
+        </article>
+        <article class="card" data-card>
+          <svg class="micro" viewBox="0 0 160 100" role="img" aria-label="Animated illustration: color flow Doppler">
+            <use href="#mini-echo" />
+            <ellipse cx="72" cy="50" rx="13" ry="22" class="m-flow m-flow--red" fill="url(#flow-red)" />
+            <ellipse cx="90" cy="56" rx="12" ry="20" class="m-flow m-flow--blue" fill="url(#flow-blue)" />
+            <path d="M80 8 L54 41 A42 42 0 0 0 106 41 Z" class="m-box" transform="translate(0 14)" />
+          </svg>
+          <h3 class="card__title" data-i18n="exp.color">Color Flow</h3>
+          <p class="card__text" data-i18n="exp.color.t">Color-flow mapping of blood-flow direction across valves and chambers.</p>
+        </article>
+        <article class="card" data-card>
+          <svg class="micro" viewBox="0 0 160 100" role="img" aria-label="Animated illustration: stress echo quad screen">
+            <g transform="translate(6 4) scale(.46)"><use href="#mini-echo" /><g class="m-beat"><ellipse cx="80" cy="54" rx="15" ry="21" class="m-wall" /><ellipse cx="80" cy="54" rx="9" ry="15" class="m-cavity" /></g></g>
+            <g transform="translate(80 4) scale(.46)"><use href="#mini-echo" /><g class="m-beat m-beat--fast"><ellipse cx="80" cy="54" rx="15" ry="21" class="m-wall" /><ellipse cx="80" cy="54" rx="9" ry="15" class="m-cavity" /></g></g>
+            <g transform="translate(6 52) scale(.46)"><use href="#mini-echo" /><g class="m-beat"><ellipse cx="80" cy="54" rx="13" ry="21" class="m-wall" /><ellipse cx="80" cy="54" rx="8" ry="15" class="m-cavity" /></g></g>
+            <g transform="translate(80 52) scale(.46)"><use href="#mini-echo" /><g class="m-beat m-beat--fast"><ellipse cx="80" cy="54" rx="13" ry="21" class="m-wall" /><ellipse cx="80" cy="54" rx="8" ry="15" class="m-cavity" /></g></g>
+            <g class="m-label"><text x="10" y="12">REST</text><text x="84" y="12">PEAK</text></g>
+          </svg>
+          <h3 class="card__title" data-i18n="exp.stress">Stress Echo</h3>
+          <p class="card__text" data-i18n="exp.stress.t">Wall-motion assessment of the heart at rest and under stress.</p>
+        </article>
+        <article class="card" data-card>
+          <svg class="micro" viewBox="0 0 160 100" role="img" aria-label="Animated illustration: TEE multiplane angle dial">
+            <path d="M30 82 A50 50 0 0 1 130 82" class="m-dial" />
+            <g class="m-ticks">
+              <line x1="30" y1="82" x2="38" y2="82" /><line x1="44.6" y1="46.6" x2="50.3" y2="52.3" /><line x1="80" y1="32" x2="80" y2="40" /><line x1="115.4" y1="46.6" x2="109.7" y2="52.3" /><line x1="130" y1="82" x2="122" y2="82" />
+            </g>
+            <g class="m-label"><text x="22" y="94">0°</text><text x="74" y="26">90°</text><text x="124" y="94">180°</text></g>
+            <g class="m-needle"><line x1="80" y1="82" x2="38" y2="82" /><circle cx="80" cy="82" r="4" /></g>
+          </svg>
+          <h3 class="card__title" data-i18n="exp.tee">TEE</h3>
+          <p class="card__text" data-i18n="exp.tee.t">Transesophageal echocardiography for close, high-resolution views.</p>
+        </article>
+        <article class="card" data-card>
+          <svg class="micro" viewBox="0 0 160 100" role="img" aria-label="Animated illustration: pediatric echo with a small, fast-beating heart">
+            <g transform="translate(16 6) scale(.8)"><use href="#mini-echo" /></g>
+            <g class="m-beat m-beat--fast"><ellipse cx="80" cy="48" rx="9" ry="13" class="m-wall" /><ellipse cx="80" cy="48" rx="5" ry="9" class="m-cavity" /></g>
+            <line class="m-scan m-scan--fast" x1="80" y1="12" x2="80" y2="84" />
+          </svg>
+          <h3 class="card__title" data-i18n="exp.peds">Pediatric Echo</h3>
+          <p class="card__text" data-i18n="exp.peds.t">Independent pediatric studies, with referral to pediatric cardiology.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 4. CAREER (ECG timeline) -->
+    <section class="panel career" id="career" data-heart="career" aria-labelledby="career-title">
+      <div class="panel__copy panel__copy--wide">
+        <header class="section-head" data-sweep>
+          <p class="eyebrow"><span class="eyebrow__n">03</span><span data-i18n="career.eyebrow">Career</span></p>
+          <h2 class="h2" id="career-title" data-i18n="career.title">The rhythm of a career</h2>
+        </header>
+        <div class="timeline">
+          <svg class="tl__ecg" aria-hidden="true" preserveAspectRatio="none">
+            <path class="tl__ghost" />
+            <path class="tl__trace" />
+            <circle class="tl__pen" r="3.5" />
+          </svg>
+          <ol class="tl">
+            <li class="tl__item">
+              <p class="tl__date" data-i18n="c1.date">2022 – Present</p>
+              <h3 class="tl__role" data-i18n="c1.role">Head of Non-Invasive Cardiac Lab</h3>
+              <p class="tl__org" data-i18n="c1.org">Prince Hamza Hospital</p>
+              <p class="tl__text" data-i18n="c1.t">Leads a team of 7; supervises equipment provision; trains staff; manages the department's needs.</p>
+            </li>
+            <li class="tl__item">
+              <p class="tl__date" data-i18n="c2.date">Oct 2022 – Oct 2024</p>
+              <h3 class="tl__role" data-i18n="c2.role">Echocardiographer, Cardiac Imaging Clinic (part-time)</h3>
+              <p class="tl__org" data-i18n="c2.org">International Medical Corps (IMC)</p>
+              <p class="tl__text" data-i18n="c2.t">Ran the adult and pediatric echo service for refugee patients; full preliminary reports; pediatric cardiology referrals.</p>
+            </li>
+            <li class="tl__item">
+              <p class="tl__date" data-i18n="c3.date">2010 – 2022</p>
+              <h3 class="tl__role" data-i18n="c3.role">Senior Echocardiographer</h3>
+              <p class="tl__org" data-i18n="c3.org">Prince Hamza Hospital</p>
+              <p class="tl__text" data-i18n="c3.t">All modalities (2D, Doppler, Color Flow, Stress Echo, TEE); independent pediatric echo; quality assurance; sonographer training and in-service programs.</p>
+            </li>
+            <li class="tl__item">
+              <p class="tl__date" data-i18n="c4.date">2005 – 2010</p>
+              <h3 class="tl__role" data-i18n="c4.role">Senior Nurse, CCU</h3>
+              <p class="tl__org" data-i18n="c4.org">Prince Hamza Hospital</p>
+            </li>
+            <li class="tl__item">
+              <p class="tl__date" data-i18n="c5.date">2004 – 2005</p>
+              <h3 class="tl__role" data-i18n="c5.role">Head Nurse, Medical-Surgical Unit</h3>
+              <p class="tl__org" data-i18n="c5.org">Jordan Hospital</p>
+            </li>
+            <li class="tl__item">
+              <p class="tl__date" data-i18n="c6.date">2000 – 2004</p>
+              <h3 class="tl__role" data-i18n="c6.role">Staff / Charge Nurse</h3>
+              <p class="tl__org" data-i18n="c6.org">Jordan Hospital</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. TEACHING -->
+    <section class="panel teaching" id="teaching" data-heart="teaching" aria-labelledby="teach-title">
+      <div class="panel__copy panel__copy--wide">
+        <header class="section-head" data-sweep>
+          <p class="eyebrow"><span class="eyebrow__n">04</span><span data-i18n="teach.eyebrow">Teaching</span></p>
+          <h2 class="h2" id="teach-title" data-i18n="teach.title">Passing on the craft</h2>
+        </header>
+        <div class="cards cards--stack">
+          <article class="card card--row" data-card>
+            <p class="card__meta" data-i18n="t1.date">2020 – Present</p>
+            <h3 class="card__title" data-i18n="t1.role">Internal Clinical Instructor (Echocardiography)</h3>
+            <p class="card__org" data-i18n="t1.org">Prince Hamza Hospital</p>
+            <p class="card__text" data-i18n="t1.t">6-month echo courses for staff joining the department, including trainees from Ministry of Health hospitals; simulation-based training in cardiac procedures.</p>
+          </article>
+          <article class="card card--row" data-card>
+            <p class="card__meta" data-i18n="t2.date">2011 – 2013</p>
+            <h3 class="card__title" data-i18n="t2.role">Physiology Instructor</h3>
+            <p class="card__org" data-i18n="t2.org">Rufaida Al-Aslamiya College (Ministry of Health)</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. EDUCATION -->
+    <section class="panel education" id="education" data-heart="education" aria-labelledby="edu-title">
+      <div class="panel__copy panel__copy--wide">
+        <header class="section-head" data-sweep>
+          <p class="eyebrow"><span class="eyebrow__n">05</span><span data-i18n="edu.eyebrow">Education &amp; Certifications</span></p>
+          <h2 class="h2" id="edu-title" data-i18n="edu.title">Credentials</h2>
+        </header>
+        <div class="cards cards--2">
+          <article class="card cert" data-card>
+            <p class="card__meta" data-i18n="e1.meta">2021 – 2022 · 600 hours</p>
+            <h3 class="card__title" data-i18n="e1.title">Training Diploma, Advanced Echocardiography Technologist</h3>
+            <p class="card__org" data-i18n="e1.org">University of Jordan, Center of Consultations and Training, with Health Appeal Society</p>
+          </article>
+          <article class="card cert" data-card>
+            <p class="card__meta">2010</p>
+            <h3 class="card__title" data-i18n="e2.title">MSc Physiology</h3>
+            <p class="card__org" data-i18n="e2.org">Faculty of Medicine, Jordan University of Science and Technology</p>
+            <p class="card__text" data-i18n="e2.t">Research focus: echocardiography and cardiac catheterization.</p>
+          </article>
+          <article class="card cert" data-card>
+            <p class="card__meta">2013</p>
+            <h3 class="card__title" data-i18n="e3.title">Advanced Diploma, Healthcare Quality Management</h3>
+            <p class="card__org" data-i18n="e3.org">German Consultation Center</p>
+          </article>
+          <article class="card cert" data-card>
+            <p class="card__meta">2000</p>
+            <h3 class="card__title" data-i18n="e4.title">BSc Nursing</h3>
+            <p class="card__org" data-i18n="e4.org">Al-Zaytoonah University</p>
+          </article>
+          <article class="card cert" data-card>
+            <p class="card__meta">2025</p>
+            <h3 class="card__title" data-i18n="e5.title">BLS Provider</h3>
+            <p class="card__org" data-i18n="e5.org">American Heart Association</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. CONTACT -->
+    <section class="panel contact" id="contact" data-heart="contact" aria-labelledby="contact-title">
+      <div class="contact__copy">
+        <header class="section-head" data-sweep>
+          <p class="eyebrow"><span class="eyebrow__n">06</span><span data-i18n="contact.eyebrow">Contact</span></p>
+          <h2 class="h2" id="contact-title" data-i18n="contact.title">Get in touch</h2>
+        </header>
+        <address class="contact__list" data-reveal>
+          <p><span data-i18n="contact.email">Email</span><a href="mailto:asharfalqaisi@gmail.com" dir="ltr">asharfalqaisi@gmail.com</a></p>
+          <p><span data-i18n="contact.phone">Phone</span><a href="tel:+962799789168" dir="ltr">+962 79 978 9168</a></p>
+          <p><span data-i18n="contact.wa">WhatsApp</span><a href="https://wa.me/962799789168" target="_blank" rel="noopener" dir="ltr">wa.me/962799789168</a></p>
+        </address>
+        <div class="actions" data-reveal>
+          <a class="btn btn--primary" href="./Ashraf_Al_Qaisse_CV.pdf" download data-i18n="contact.cv">Download CV (PDF)</a>
+          <a class="btn" href="https://wa.me/962799789168" target="_blank" rel="noopener" data-i18n="contact.wa.btn">Message on WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p data-i18n="footer">© Ashraf Al Qaisse · Amman, Jordan</p>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
