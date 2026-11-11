@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initI18n } from './i18n.js';
 import { pulse, tickPulse } from './pulse.js';
 import { createEcho } from './echo.js';
-import { createMiniEcg, initTimelineEcg } from './ecg.js';
+import { createMiniEcg, initTimelineEcg, createBackgroundEcg } from './ecg.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -60,6 +60,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 const bpmVal = document.getElementById('bpm-val');
 const hudHr = document.getElementById('hud-hr');
 createMiniEcg(document.getElementById('mini-ecg'), pulse, { reduceMotion });
+createBackgroundEcg(document.getElementById('bg-ecg'), pulse, { reduceMotion });
 if (!reduceMotion) {
   let shown = 72;
   setInterval(() => {

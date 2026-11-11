@@ -117,3 +117,103 @@ export function initTimelineEcg(root, { gsap, ScrollTrigger, reduceMotion }) {
   }
   return { rebuild: build };
 }
+
+// Background monitor: a faint ECG trace written across the page behind the content,
+// beating with the shared pulse. Older trace fades out behind the write head.
+export function createBackgroundEcg(canvas, pulse, { reduceMotion = false } = {}) {
+  const ctx = canvas.getContext('2d');
+  const SWEEP_S = 6.5;         // seconds for the write head to cross the screen
+  const FPS_STEP = 1 / 40;
+  let W = 0, H = 0, ys = null, head = 0, lastPhase = pulse.phase, last = performance.now(), acc = 0;
+
+  const baseline = () => H * 0.82;
+  const amp = () => Math.min(90, Math.max(46, H * 0.08));
+  const yOf = (p) => baseline() - ecgWave(p) * amp();
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio, 1.5);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.ceil(W) + 2;
+    ys = new Float32Array(n).fill(NaN);
+    head = Math.min(head, n - 1);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineWidth = 1.6;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    const n = ys.length;
+    const CHUNK = 14;
+    // Draw in short chunks; alpha falls off with distance behind the write head.
+    for (let start = 0; start < n - 1; start += CHUNK) {
+      const end = Math.min(n - 1, start + CHUNK);
+      const mid = (start + end) / 2;
+      const behind = (head - mid + n) % n;            // 0 at the head, grows into the past
+      const a = Math.max(0, 1 - behind / (n * 0.85));
+      if (a <= 0.01) continue;
+      ctx.strokeStyle = `rgba(200, 16, 46, ${(0.42 * a * a).toFixed(3)})`;
+      ctx.beginPath();
+      let pen = false;
+      for (let x = start; x <= end; x++) {
+        const y = ys[x];
+        if (Number.isNaN(y) || (x > head && x < head + 24)) { pen = false; continue; } // gap ahead of head
+        if (!pen) { ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    // Glowing write head
+    const hy = ys[Math.floor(head)];
+    if (!Number.isNaN(hy)) {
+      const g = ctx.createRadialGradient(head, hy, 0, head, hy, 16);
+      g.addColorStop(0, 'rgba(200, 16, 46, 0.45)');
+      g.addColorStop(1, 'rgba(200, 16, 46, 0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(head - 16, hy - 16, 32, 32);
+      ctx.fillStyle = 'rgba(200, 16, 46, 0.7)';
+      ctx.beginPath(); ctx.arc(head, hy, 2.2, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  function step(dt) {
+    const n = ys.length;
+    const dx = (dt * W) / SWEEP_S;
+    let dp = pulse.phase - lastPhase;
+    if (dp < 0) dp += 1;
+    const steps = Math.max(1, Math.ceil(dx));
+    for (let i = 1; i <= steps; i++) {
+      const x = Math.floor(head + (dx * i) / steps) % n;
+      ys[x] = yOf((lastPhase + (dp * i) / steps) % 1);
+    }
+    head = (head + dx) % n;
+    lastPhase = pulse.phase;
+  }
+
+  resize();
+  window.addEventListener('resize', () => { resize(); if (reduceMotion) drawStatic(); });
+
+  function drawStatic() {
+    // Reduced motion: a still strip of a few beats, already faded at the start.
+    const beatPx = (W / SWEEP_S) * (60 / 72);
+    for (let x = 0; x < ys.length; x++) ys[x] = yOf(((x / beatPx) + 0.6) % 1);
+    head = ys.length - 30;
+    draw();
+  }
+  if (reduceMotion) { drawStatic(); return; }
+
+  function frame(now) {
+    requestAnimationFrame(frame);
+    const dt = Math.min((now - last) / 1000, 0.1);
+    last = now;
+    acc += dt;
+    if (acc < FPS_STEP) return; // ~40 fps is plenty for a faint background
+    step(acc);
+    acc = 0;
+    draw();
+  }
+  requestAnimationFrame(frame);
+}
