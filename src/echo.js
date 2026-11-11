@@ -73,8 +73,8 @@ export function createEcho(canvas, pulse, { reduceMotion = false, mobile = false
     canvas.width = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const top = Math.max(72, H * 0.1);
-    R = Math.min(H * 0.86 - top, (W * 0.44) / Math.sin(HALF));
+    R = Math.min(H * 0.78, (W / 2 - 46) / Math.sin(HALF)); // leave room for the depth ruler
+    const top = Math.max(56, (H - R) / 2);                 // centred vertically in the panel
     apex = { x: W / 2, y: top };
     const bw = 2 * R * Math.sin(HALF);
     box = { x: apex.x - bw / 2, y: apex.y, w: bw, h: R };
