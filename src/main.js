@@ -12,26 +12,14 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 const mobile = window.matchMedia('(max-width: 760px), (pointer: coarse)').matches;
 document.documentElement.classList.toggle('reduced', reduceMotion);
 
-// Heart pose per section: each one is a different "echo window" on the heart.
-// x is measured away from the text (flipped for RTL). dim = fade on portrait screens.
-const STATES = {
-  hero:      { x: 0,    y: 0.66,  z: 0,    rx: 0.05,  ry: 0,    rz: 0,     s: 0.5,  bpm: 72, dim: 0 },
-  about:     { x: 1.5,  y: -0.05, z: 0.3,  rx: 0.15,  ry: -1.25, rz: 0.12, s: 0.7,  bpm: 72, dim: 0.6 },
-  expertise: { x: 1.8,  y: 0.85,  z: -1.4, rx: 0.2,   ry: 0.6,  rz: -0.15, s: 0.5,  bpm: 72, dim: 0.78 },
-  career:    { x: 1.7,  y: 0.0,   z: 0,    rx: 0.3,   ry: 1.35, rz: -0.12, s: 0.62, bpm: 72, dim: 0.78 },
-  teaching:  { x: 1.55, y: 0.05,  z: 0.3,  rx: -0.3,  ry: -0.7, rz: 0.1,   s: 0.64, bpm: 72, dim: 0.6 },
-  education: { x: 1.75, y: 0.1,   z: -0.4, rx: 0.85,  ry: -0.35, rz: 0,    s: 0.6,  bpm: 72, dim: 0.78 },
-  contact:   { x: 0,    y: 0.95,  z: 0,    rx: 0.05,  ry: 0,    rz: 0,     s: 0.42, bpm: 58, dim: 0 },
-};
-const pose = { ...STATES.hero, spin: 0, side: 1 };
+// The heart lives only in the hero monitor: a fixed three-quarter anterior view.
+const pose = { x: 0, y: 0.15, rx: 0.05, ry: 0, rz: 0, s: 0.62 };
+const rate = { bpm: 72 }; // resting rate; calmer at Contact
 
 // ---------- Language ----------
 let timeline = null;
 let heart = null;
-initI18n((lang, first) => {
-  const side = lang === 'ar' ? -1 : 1;
-  if (first || reduceMotion) pose.side = side;
-  else gsap.to(pose, { side, duration: 1.2, ease: 'power3.inOut', onUpdate: () => heart?.render() });
+initI18n(() => {
   heart?.render();
   timeline?.rebuild();
   ScrollTrigger.refresh();
@@ -51,7 +39,7 @@ gsap.ticker.lagSmoothing(0);
 gsap.ticker.add((time, deltaMs) => {
   lenis?.raf(time * 1000);
   if (!reduceMotion) {
-    pulse.base = pose.bpm;
+    pulse.base = rate.bpm;
     tickPulse(Math.min(deltaMs / 1000, 0.1));
   }
 });
@@ -83,24 +71,11 @@ if (!reduceMotion) {
 // ---------- Echo sector (hero) ----------
 createEcho(document.getElementById('echo-canvas'), pulse, { reduceMotion, mobile });
 
-// ---------- Heart choreography ----------
+// ---------- Calm rhythm at Contact ----------
 if (!reduceMotion) {
-  const sections = [...document.querySelectorAll('[data-heart]')];
-  sections.forEach((sec, i) => {
-    if (i === 0) return;
-    const from = STATES[sections[i - 1].dataset.heart];
-    const to = STATES[sec.dataset.heart];
-    gsap.fromTo(pose, { ...from }, {
-      ...to,
-      ease: 'power1.inOut',
-      immediateRender: false,
-      scrollTrigger: { trigger: sec, start: 'top bottom', end: 'top 15%', scrub: 1.2 },
-    });
-  });
-  // The heart turns a full revolution through the expertise section.
-  gsap.fromTo(pose, { spin: 0 }, {
-    spin: Math.PI * 2, ease: 'none', immediateRender: false,
-    scrollTrigger: { trigger: '#expertise', start: 'top 40%', end: 'bottom 60%', scrub: 1.5 },
+  ScrollTrigger.create({
+    trigger: '#contact', start: 'top 60%', end: 'bottom top',
+    onToggle: (self) => gsap.to(rate, { bpm: self.isActive ? 58 : 72, duration: 1.5 }),
   });
 }
 

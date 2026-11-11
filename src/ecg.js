@@ -9,7 +9,7 @@ export function createMiniEcg(canvas, pulse, { reduceMotion = false } = {}) {
   canvas.width = W * dpr;
   canvas.height = H * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.strokeStyle = '#3ddc84';
+  ctx.strokeStyle = '#c8102e';
   ctx.lineWidth = 1.3;
   ctx.lineJoin = 'round';
 

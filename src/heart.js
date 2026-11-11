@@ -310,23 +310,18 @@ export async function createHeart(canvas, { pose, pulse, reduceMotion = false, m
   holder.add(spinner);
   scene.add(holder);
 
-  // ---------- Layout ----------
-  let layout = { xMul: 1, sMul: 1, portrait: false };
+  // ---------- Layout: the canvas fills the hero "monitor" panel ----------
+  let fit = 1;
   function resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const w = Math.max(1, canvas.clientWidth);
+    const h = Math.max(1, canvas.clientHeight);
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    const a = w / h;
-    layout = a < 0.8
-      ? { xMul: 0.32, sMul: 0.72, portrait: true }
-      : a < 1.3
-        ? { xMul: 0.62, sMul: 0.86, portrait: false }
-        : { xMul: 1, sMul: 1, portrait: false };
+    fit = Math.min(1, (w / h) / 0.8); // shrink in narrow panels so the heart never crops
   }
   resize();
-  window.addEventListener('resize', resize);
+  new ResizeObserver(() => { resize(); api.render(); }).observe(canvas);
 
   const pointer = { x: 0, y: 0, sx: 0, sy: 0 };
   if (!reduceMotion) {
@@ -336,7 +331,7 @@ export async function createHeart(canvas, { pose, pulse, reduceMotion = false, m
     });
   }
 
-  const api = { intro: reduceMotion ? 1 : 0 };
+  const api = { intro: reduceMotion ? 1 : 0, render: () => {} };
   let lastOpacity = -1;
   const clock = new THREE.Clock();
 
@@ -356,22 +351,17 @@ export async function createHeart(canvas, { pose, pulse, reduceMotion = false, m
       vessels.scale.setScalar(1 + 0.012 * b.lub + 0.006 * b.dub);
     }
 
+    // The heart stays in place: only a slow idle turn, a gentle pointer tilt and the intro.
     const intro = api.intro;
-    // Portrait: keep the heart in the upper part of the screen so it never sits behind the copy
-    const y = layout.portrait && s.dim > 0 ? 1.05 + s.y * 0.2 : s.y;
-    holder.position.set(s.x * s.side * layout.xMul, y + (1 - intro) * -0.5, s.z);
-    holder.rotation.set(s.rx + pointer.sy * 0.12, pointer.sx * 0.2, s.rz);
-    holder.scale.setScalar(Math.max(s.s * layout.sMul * (0.4 + 0.6 * intro), 0.0001));
-    spinner.rotation.y = s.ry + s.spin + (reduceMotion ? 0 : Math.sin(t * 0.25) * 0.18) + (1 - intro) * -1.6;
+    holder.position.set(s.x, s.y + (1 - intro) * -0.5, 0);
+    holder.rotation.set(s.rx + pointer.sy * 0.1, pointer.sx * 0.18, s.rz);
+    holder.scale.setScalar(Math.max(s.s * fit * (0.4 + 0.6 * intro), 0.0001));
+    spinner.rotation.y = s.ry + (reduceMotion ? 0 : Math.sin(t * 0.25) * 0.22) + (1 - intro) * -1.6;
 
-    const op = (layout.portrait ? 1 - s.dim : 1) * intro;
-    if (Math.abs(op - lastOpacity) > 0.005) { canvas.style.opacity = op.toFixed(3); lastOpacity = op; }
+    if (Math.abs(intro - lastOpacity) > 0.005) { canvas.style.opacity = intro.toFixed(3); lastOpacity = intro; }
 
     renderer.render(scene, camera);
   }
-
-  function start() { clock.getDelta(); renderer.setAnimationLoop(frame); }
-  function stop() { renderer.setAnimationLoop(null); }
 
   // Compile shaders off the critical path (parallel compile where supported)
   await breathe();
@@ -380,12 +370,19 @@ export async function createHeart(canvas, { pose, pulse, reduceMotion = false, m
   if (reduceMotion) {
     // Static heart: render only when something changes.
     api.render = () => requestAnimationFrame(frame);
-    window.addEventListener('resize', api.render);
     api.render();
   } else {
-    api.render = () => {};
-    start();
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    // Render only while the hero is on screen and the tab is visible.
+    let onScreen = true;
+    let running = false;
+    const update = () => {
+      const should = onScreen && !document.hidden;
+      if (should && !running) { running = true; clock.getDelta(); renderer.setAnimationLoop(frame); }
+      if (!should && running) { running = false; renderer.setAnimationLoop(null); }
+    };
+    new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; update(); }).observe(canvas);
+    document.addEventListener('visibilitychange', update);
+    update();
   }
   return api;
 }
